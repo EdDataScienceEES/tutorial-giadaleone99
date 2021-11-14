@@ -1,0 +1,71 @@
+---
+title: "Tutorial"
+author: "Giada Leone"
+date: "14/11/2021"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+# Creating **interactive** and **descriptive** maps in R for intermediate users
+
+This tutorial is aimed at people who have some experience in using R and would like to take their **spatial data visualisation** to the next level by using R as a GIS like software using specific packages.
+
+### Learning objectives:
+1. 
+2. 
+3. 
+4. 
+
+These are the libraries we need to load
+```{r}
+
+library(tidyverse)
+library(janitor)
+library(ggthemes)
+library(sf)
+library(mapview)
+```
+
+Load the dataset
+```{r}
+beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
+str(beaches)  # Checking data structure
+
+```
+
+Prepare the data
+```{r}
+beaches <- beaches %>% clean_names()  # cleaning data frame column names
+beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  # deleting unused columns
+beaches <- drop_na(beaches)  # dropping columns which have NA values
+
+```
+
+Changing data type 
+
+```{r}
+beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
+                       mutate_if(is.integer, as.numeric)
+
+```
+
+Spatial analysis 
+```{r}
+beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
+
+# examine the sf objec
+beaches_obj
+str(beaches_obj)
+
+plot(beaches_obj)
+
+plot(st_geometry(beaches_obj))
+```
+
+Interactive map 
+```{r}
+mapview(beaches_obj, zcol = 'beach_region')
+```
+
+
