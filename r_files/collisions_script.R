@@ -25,29 +25,13 @@ Europe_collisions <- collision_data %>%
 
 Europe_collisions$lat <- as.double(Europe_collisions$lat)
 
-Europe_collisions[!is.na(Europe_collisions$Lat),
-                  !is.na(Europe_collisions$Long),]
-
-df[!is.na(df$Col3),]
-
-UK_collisions <- collision_data %>% 
-  filter(Country %in% "UK") %>% 
-  clean_names() 
-
-
-# Figure out how to drop rows with NAs in 2 different columns
-
-
-
-
-
-glimpse(UK_collisions)
-UK_collisions$lat <- as.double(UK_collisions$lat)
+## Only keeps rows with no NAs
+Europe_collisions <- Europe_collisions[complete.cases(Europe_collisions), ]
 
 glimpse(Europe_collisions)
 
 collisions_obj <- st_as_sf(Europe_collisions, coords =  c('long', 'lat'), crs = 4326)
 
-plot(collisions_obj)
+
 
 mapview(collisions_obj, zcol = 'country')
