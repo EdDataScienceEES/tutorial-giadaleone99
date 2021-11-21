@@ -19,18 +19,13 @@ str(beaches)
 
 # Preparing the data 
 
-beaches <- beaches %>% clean_names()  # cleaning data frame column names
+beaches <- beaches %>% clean_names()   # cleaning data frame column names
 beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  # deleting unused columns
 beaches <- drop_na(beaches)  # dropping columns which have NA values
 
 # Changing data types
 beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
                        mutate_if(is.integer, as.numeric)
-
-
-
-
-
 
 
 
