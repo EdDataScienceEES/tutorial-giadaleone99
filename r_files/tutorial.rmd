@@ -7,48 +7,85 @@ output:
   pdf_document: default
 ---
 
-# Creating **interactive** and **descriptive** maps in R for intermediate users
+# Creating **static and interactive** maps in R for intermediate users
 
 This tutorial is aimed at people who have some experience in using R and would like to take their **spatial data visualisation** to the next level by using R as a GIS like software using specific packages.
 
-### Learning objectives:
-1. 
-2. 
-3. 
-4. 
+R is very powerful due to its wide applications in statistics, mdoelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data. 
 
-These are the libraries we need to load
+### Tutorial Aims:
+1. Data preparation and wrangling for spatial visualisation
+2. Creating basic maps using ggplot2
+3. Creating interactive maps using the mapview package
+4. ...
+
+These are the libraries we need to load. 
+If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
 ```{r}
-
-library(tidyverse)
-library(janitor)
-library(ggthemes)
-library(sf)
-library(mapview)
+library(tidyverse)  # Data wrangling
+library(janitor)    # Cleaning datasets
+library(ggthemes)   # Themes for ggplot2
+library(sf)         # 
+library(mapview)    # Interactive maps
 ```
 
-Load the dataset
+Import the dataset
 ```{r}
 beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
 str(beaches)  # Checking data structure
 
 ```
 
-Prepare the data
+Preparing the data
 ```{r}
-beaches <- beaches %>% clean_names()  # cleaning data frame column names
-beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  # deleting unused columns
-beaches <- drop_na(beaches)  # dropping columns which have NA values
+# cleaning data frame column names
+beaches <- beaches %>% clean_names() 
+
+# deleting unused columns
+beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  
+
+# dropping columns which have NA values
+beaches <- drop_na(beaches)  
 
 ```
 
-Changing data type 
+Changing data type
 
 ```{r}
 beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
                        mutate_if(is.integer, as.numeric)
 
 ```
+
+
+Let's use ggplot to create a map to show us all the beaches around the UK which have data from Great British Beach Clean surveys. 
+
+Here we specify the coordinates (longitude and latitude) of our points within the ```aes()``` function and we also tell ggplot to colour the points depending on beach region.
+
+```{r}
+(map <- ggplot(beaches,
+               aes(x = beach_longitude,
+                   y = beach_latitude, 
+                   colour = beach_region)) +
+   borders("world", colour = "grey5", fill = "black", size = 0.2) +
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   theme_map() +
+   geom_point(size = 1) +
+   theme(plot.title = element_text(size = 12, hjust = 0.5),
+         legend.position = c(0.77, 0.4),
+         legend.box.background = element_rect(color = 'grey', size = 0.5)) +
+   labs(title = "Beach Locations by Region",
+        colour = "UK Regions"))
+```
+
+
+
+
+
+
+
+
+
 
 Spatial analysis 
 ```{r}

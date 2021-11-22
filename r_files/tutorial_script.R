@@ -1,4 +1,4 @@
-# Tutorial: Creating interactive descriptive maps in R
+# Tutorial: Creating static and interactive descriptive maps in R
 # Created by Giada Leone
 # 14/11/2021
 
@@ -28,6 +28,29 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
                        mutate_if(is.integer, as.numeric)
 
 
+# CREATING A STATIC MAP ----
+(map <- ggplot(beaches,
+               aes(x = beach_longitude,
+                   y = beach_latitude, 
+                   colour = beach_region)) +
+   borders("world", colour = "grey5", fill = "black", size = 0.2) +
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   theme_map() +
+   geom_point(size = 1) +
+   theme(plot.title = element_text(size = 12, hjust = 0.5),
+         legend.position = c(0.77, 0.4),
+         legend.box.background = element_rect(color = 'grey', size = 0.5)) +
+   labs(title = "Beach Locations by Region",
+        colour = "UK Regions"))
+
+# theme(legend.position = c(, 0.2)
+
+ggsave("outputs/beaches_map.png", width = 7, height = 5)
+
+
+
+
+
 
 # Spatial analysis
 beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
@@ -51,4 +74,7 @@ plot(filt_data$geometry)
 
 # Interactive map
 mapview(beaches_obj, zcol = 'beach_region')
+
+
+
 
