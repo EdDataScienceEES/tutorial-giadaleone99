@@ -29,7 +29,56 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
 
 
 # CREATING A STATIC MAP ----
-(map <- ggplot(beaches,
+
+simple_map <- ggplot(beaches,
+                     aes(x = beach_longitude,
+                         y = beach_latitude)) +
+   borders("world") +
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   theme_map() +
+   geom_point(size = 1)
+
+# Basic map
+ggplot(beaches) +
+   borders("world", colour = "black") +
+   theme_bw()
+
+# Zoom in to UK 
+ggplot(beaches) +
+   borders("world", colour = "black", fill = "lightgrey") +  # changing the colour of the map
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   theme_map()  # Gets rid of default long and lat axes and grids
+
+# Adding the surveyed beaches within the aes() function
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude)) +
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() 
+   
+
+# Changing map background
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude)) +
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(panel.background = element_rect(fill = "aliceblue"))
+
+# Want to change the points according to region?
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude,
+                    colour = beach_region)) +
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(panel.background = element_rect(fill = "aliceblue"))
+
+
+(map1 <- ggplot(beaches,
                aes(x = beach_longitude,
                    y = beach_latitude, 
                    colour = beach_region)) +

@@ -7,6 +7,8 @@ rm(list= ls())
 # Libraries 
 library(tidyverse)
 library(janitor)
+library(mapview)
+library(sf)
 
 # Importing dataset
 collision_data <- read.csv("data/collision_data.csv")
@@ -31,6 +33,8 @@ Europe_collisions <- Europe_collisions[complete.cases(Europe_collisions), ]
 glimpse(Europe_collisions)
 
 collisions_obj <- st_as_sf(Europe_collisions, coords =  c('long', 'lat'), crs = 4326)
+
+
 
 
 

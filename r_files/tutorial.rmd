@@ -11,7 +11,7 @@ output:
 
 This tutorial is aimed at people who have some experience in using R and would like to take their **spatial data visualisation** to the next level by using R as a GIS like software using specific packages.
 
-R is very powerful due to its wide applications in statistics, mdoelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data. 
+R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data and different ways to visualise it.
 
 ### Tutorial Aims:
 1. Data preparation and wrangling for spatial visualisation
@@ -21,7 +21,7 @@ R is very powerful due to its wide applications in statistics, mdoelling, data v
 
 These are the libraries we need to load. 
 If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(tidyverse)  # Data wrangling
 library(janitor)    # Cleaning datasets
 library(ggthemes)   # Themes for ggplot2
@@ -29,7 +29,7 @@ library(sf)         #
 library(mapview)    # Interactive maps
 ```
 
-Import the dataset
+Importing the dataset
 ```{r}
 beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
 str(beaches)  # Checking data structure
@@ -60,7 +60,19 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
 
 Let's use ggplot to create a map to show us all the beaches around the UK which have data from Great British Beach Clean surveys. 
 
+Creating a basic map in ggplot2
+
+
+
+
+
+
+
 Here we specify the coordinates (longitude and latitude) of our points within the ```aes()``` function and we also tell ggplot to colour the points depending on beach region.
+
+
+
+
 
 ```{r}
 (map <- ggplot(beaches,
