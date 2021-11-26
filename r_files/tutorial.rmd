@@ -7,9 +7,9 @@ output:
   pdf_document: default
 ---
 
-# Creating **static and interactive** maps in R for intermediate users
+# Creating **static and interactive** maps in R for beginners
 
-This tutorial is aimed at people who have some experience in using R and would like to take their **spatial data visualisation** to the next level by using R as a GIS like software using specific packages.
+This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages.
 
 R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data and different ways to visualise it.
 
@@ -20,20 +20,37 @@ R is very powerful due to its wide applications in statistics, modelling, data v
 4. ...
 
 These are the libraries we need to load. 
+
+We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which can be used for visualisation.
+
+The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may be messy.
+
 If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
+
+The package ```mapview```
+
+If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include all the names within the "" before loading them with the ```library(packagename)``` function.
 ```{r, warning=FALSE, message=FALSE}
-library(tidyverse)  # Data wrangling
+# Libraries ----
+# install.packages("tidyverse")
+   
+library(tidyverse)  # Data wrangling & includes ggplot2
 library(janitor)    # Cleaning datasets
 library(ggthemes)   # Themes for ggplot2
 library(sf)         # 
 library(mapview)    # Interactive maps
 ```
 
-Importing the dataset
+Downloading and importing the dataset
+
+To download the dataset you can clone or download the repository to your computer and find the 'beachwatch_data.csv' within the 'data' folder. To download the repository click [here](https://github.com/EdDataScienceEES/tutorial-giadaleone99) and click on the green 'Code' button and then click on 'download ZIP'. Next you can unzip the folder and move the data files where you need them.
+
+
+Here we are importing a comma separated value (.csv) file using the ```read.csv()``` function and assigning it to an object called 'beaches'. 
+
 ```{r}
 beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
 str(beaches)  # Checking data structure
-
 ```
 
 Preparing the data
@@ -103,7 +120,7 @@ Spatial analysis
 ```{r}
 beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
 
-# examine the sf objec
+# examine the sf object
 beaches_obj
 str(beaches_obj)
 
@@ -116,5 +133,3 @@ Interactive map
 ```{r}
 mapview(beaches_obj, zcol = 'beach_region')
 ```
-
-
