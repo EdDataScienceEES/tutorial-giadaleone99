@@ -1,5 +1,5 @@
 ---
-title: "Tutorial"
+title: "Creating **static and interactive** maps in R for beginners"
 author: "Giada Leone"
 date: "14/11/2021"
 output:
@@ -7,29 +7,44 @@ output:
   pdf_document: default
 ---
 
-# Creating **static and interactive** maps in R for beginners
+<br>
 
-This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages.
+#### This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data and different ways to visualise it.
 
-R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data and different ways to visualise it.
+---
 
 ### Tutorial Aims:
-1. Data preparation and wrangling for spatial visualisation
-2. Creating basic maps using ggplot2
-3. Creating interactive maps using the mapview package
-4. ...
+##### 1. Data preparation and wrangling for spatial visualisation
+##### 2. Creating basic maps using ggplot2
+##### 3. Creating interactive maps using the mapview package
+##### 4. ...
 
-These are the libraries we need to load. 
+---
+
+Once you open Rstudio you need to create a project to include all of the files related to this tutorial by clicking on the create a project symbol ![](../other/Rproj_screenshot.png) in the global toolbar at the top of an Rstudio window. Click on 'new directory' and 'new project' save the folder on your desktop and give it a descriptive name such as 'maps_tutorial'.
+
+Your Rstudio project will open up and now you can create a new script by typing 'ctrl + shift + N' on windows or 'command + shift + N' on Mac or simply by using the global toolbar.
+
+### Downloading the files
+
+To download the necessary dataset you can clone or download the [repository](https://github.com/EdDataScienceEES/tutorial-giadaleone99) by clicking on the green 'Code' button and then clicking on 'download ZIP'. Next you can unzip the folder and move the data file 'beachwatch_data.csv' into the project folder/directory that you created previously.
+
+This data is provided by the Great British Beach Clean ...
+
+---
+
+### Required packages
 
 We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which can be used for visualisation.
 
-The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may be messy.
+The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may have unorganised column names.
 
 If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
 
 The package ```mapview```
 
-If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include all the names within the "" before loading them with the ```library(packagename)``` function.
+If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include the names within the "" before loading them with the ```library(packagename)``` function.
+
 ```{r, warning=FALSE, message=FALSE}
 # Libraries ----
 # install.packages("tidyverse")
@@ -41,19 +56,24 @@ library(sf)         #
 library(mapview)    # Interactive maps
 ```
 
-Downloading and importing the dataset
+---
 
-To download the dataset you can clone or download the repository to your computer and find the 'beachwatch_data.csv' within the 'data' folder. To download the repository click [here](https://github.com/EdDataScienceEES/tutorial-giadaleone99) and click on the green 'Code' button and then click on 'download ZIP'. Next you can unzip the folder and move the data files where you need them.
+### Importing the dataset
 
+Here we are importing the file 'beachwatch_data.csv' which you previously moved to your directory. We use the ```read.csv()``` function and assign the dataframe to object called 'beaches'. 
 
-Here we are importing a comma separated value (.csv) file using the ```read.csv()``` function and assigning it to an object called 'beaches'. 
-
-```{r}
+```{r, results='hide'}
 beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
 str(beaches)  # Checking data structure
 ```
 
-Preparing the data
+---
+
+### Preparing the data
+
+Here we are organising the data by firstly cleaning the column names with the clean_names() function from the janitor package. Next we are deleting the unnecessary columns from the dataframe as well as dropping columns which have NA values.
+
+
 ```{r}
 # cleaning data frame column names
 beaches <- beaches %>% clean_names() 
@@ -74,6 +94,7 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
 
 ```
 
+---
 
 Let's use ggplot to create a map to show us all the beaches around the UK which have data from Great British Beach Clean surveys. 
 
@@ -114,10 +135,10 @@ Here we specify the coordinates (longitude and latitude) of our points within th
 
 
 
-
+---
 
 Spatial analysis 
-```{r}
+```{r, results='hide', warning=FALSE}
 beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
 
 # examine the sf object

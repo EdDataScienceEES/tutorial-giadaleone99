@@ -30,29 +30,21 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
 
 # CREATING A STATIC MAP ----
 
-simple_map <- ggplot(beaches,
-                     aes(x = beach_longitude,
-                         y = beach_latitude)) +
-   borders("world") +
-   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
-   theme_map() +
-   geom_point(size = 1)
-
 # Basic map
-ggplot(beaches) +
+ggplot() +
    borders("world", colour = "black") +
    theme_bw()
 
 # Zoom in to UK 
-ggplot(beaches) +
-   borders("world", colour = "black", fill = "lightgrey") +  # changing the colour of the map
-   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+ggplot() +
+   borders("world", colour = "black") +
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +  # specifying coordinates to zoom
    theme_map()  # Gets rid of default long and lat axes and grids
 
 # Adding the surveyed beaches within the aes() function
 ggplot(beaches, aes(x = beach_longitude,
                     y = beach_latitude)) +
-   borders("world", colour = "black", fill = "lightgrey") +  
+   borders("world", colour = "black", fill = "lightgrey") +  # changing the colour of the map
    coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
    geom_point(size = 1) +
    theme_map() 
@@ -67,7 +59,7 @@ ggplot(beaches, aes(x = beach_longitude,
    theme_map() +
    theme(panel.background = element_rect(fill = "aliceblue"))
 
-# Want to change the points according to region?
+# Want to change the point colour according to region?
 ggplot(beaches, aes(x = beach_longitude,
                     y = beach_latitude,
                     colour = beach_region)) +
@@ -76,6 +68,22 @@ ggplot(beaches, aes(x = beach_longitude,
    geom_point(size = 1) +
    theme_map() +
    theme(panel.background = element_rect(fill = "aliceblue"))
+
+# Let's move the legend so that it is not overlapping with the map
+# Here we also change the legend title and add a legend box to make it stand out
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude,
+                    colour = beach_region)) +
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(plot.title = element_text(size = 12, hjust = 0.5, face = 'bold'),  # title characteristics
+         panel.background = element_rect(fill = "aliceblue"),
+         legend.position = c(0.77, 0.45),
+         legend.box.background = element_rect(color = 'grey', size = 0.5)) +  # Adding a border
+   labs(colour = "UK Regions",  # Changing legend title
+        title = "Great British Beach Clean surveys in the UK")  # Informative title
 
 
 (map1 <- ggplot(beaches,
@@ -92,7 +100,7 @@ ggplot(beaches, aes(x = beach_longitude,
    labs(title = "Beach Locations by Region",
         colour = "UK Regions"))
 
-# theme(legend.position = c(, 0.2)
+
 
 ggsave("outputs/beaches_map.png", width = 7, height = 5)
 
