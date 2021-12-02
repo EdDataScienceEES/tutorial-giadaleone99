@@ -21,6 +21,11 @@ output:
 
 ---
 
+Here is a quick introduction to spatial data
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/F7U-nJj9yUg/0.jpg)](https://www.youtube.com/watch?v=F7U-nJj9yUg)
+
+
 Once you open Rstudio you need to create a project to include all of the files related to this tutorial by clicking on the create a project symbol ![](../other/Rproj_screenshot.png) in the global toolbar at the top of an Rstudio window. Click on 'new directory' and 'new project' save the folder on your desktop and give it a descriptive name such as 'maps_tutorial'.
 
 Your Rstudio project will open up and now you can create a new script by typing 'ctrl + shift + N' on windows or 'command + shift + N' on Mac or simply by using the global toolbar.
@@ -154,3 +159,6 @@ Interactive map
 ```{r}
 mapview(beaches_obj, zcol = 'beach_region')
 ```
+
+
+
