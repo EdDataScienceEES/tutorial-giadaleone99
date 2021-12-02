@@ -123,7 +123,7 @@ ungroup()
 # So we have the total cigarette related litter counts for all beaches in 2018
 # Now we need to divide that by the number of surveys done for each beach ID
 
-num_surveys <- beaches %>% 
+surveys_2018 <- beaches %>% 
    filter(year %in% 2018) %>% 
    group_by(beach_id) %>% 
    count(beach_id) %>% 
@@ -134,12 +134,19 @@ combo <- left_join(surveys_2018, num_surveys)
 
 # Now let's divide the total crl by the number of surveys done for each beach
 combo <- combo %>% 
-   mutate(average_crl = round(total_crl/n),
-          crl_density = round(average_crl/100, 2))
+   mutate(average_crl = round(total_crl/n),  # Rounding whole number
+          crl_density = round(average_crl/100, 2))  # Rounding to 2 decimal places
 
-# Now we can create a 
+## What if we do this for all the years? 
+
+surveys <- beaches %>% 
+   group_by(beach_id) %>% 
+   summarise(total_crl = sum(paper_cardboard_cigarette_packets, paper_cardboard_cigarette_stubs)) %>%
+   mutate()
+   ungroup() 
 
 
+... 
    
    
 
