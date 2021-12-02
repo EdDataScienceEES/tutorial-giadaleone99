@@ -105,6 +105,48 @@ ggplot(beaches, aes(x = beach_longitude,
 ggsave("outputs/beaches_map.png", width = 7, height = 5)
 
 
+
+# Calculating beach cigarette litter density in 2018
+# Group by beach ID, then add cig stubbs and packets then divide this 
+# by the number of surveys*100m? 
+
+# Here we are going to create 2 separate data frames, so we can learn how to 
+# combine them by a common column using left_join()
+
+# Filtering for 2018 surveys only
+surveys_2018 <- beaches %>% 
+   filter(year %in% 2018) %>% 
+   group_by(beach_id) %>% 
+   summarise(total_crl = sum(paper_cardboard_cigarette_packets, paper_cardboard_cigarette_stubs)) %>%
+ungroup() 
+
+# So we have the total cigarette related litter counts for all beaches in 2018
+# Now we need to divide that by the number of surveys done for each beach ID
+
+num_surveys <- beaches %>% 
+   filter(year %in% 2018) %>% 
+   group_by(beach_id) %>% 
+   count(beach_id) %>% 
+ungroup()
+
+# Combining the datasets
+combo <- left_join(surveys_2018, num_surveys)
+
+# Now let's divide the total crl by the number of surveys done for each beach
+combo <- combo %>% 
+   mutate(average_crl = round(total_crl/n),
+          crl_density = round(average_crl/100, 2))
+
+# Now we can create a 
+
+
+   
+   
+
+
+
+
+
 ## Creating an interactive map using the leaflet package ----
 # Learining how to use leaflet
 install.packages("leaflet")
