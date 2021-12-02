@@ -17,7 +17,7 @@ output:
 ##### 1. Data preparation and wrangling for spatial visualisation
 ##### 2. Creating basic maps with point data using ggplot2
 ##### 3. Creating interactive maps using the mapview package
-##### 4. ...
+##### 4. Challenge yourself try it on another dataset
 
 ---
 
@@ -46,7 +46,7 @@ The ```janitor``` package is a useful tool to clean datasets which will come in 
 
 If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
 
-The package ```mapview```
+The package ```mapview``` is used to visualise spatial data in an interactive way in R. It is intended for quick and easy interactive visualisation as opposed to producing high quality presentation maps.
 
 If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include the names within the "" before loading them with the ```library(packagename)``` function.
 

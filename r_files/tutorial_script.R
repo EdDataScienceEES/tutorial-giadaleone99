@@ -105,9 +105,70 @@ ggplot(beaches, aes(x = beach_longitude,
 ggsave("outputs/beaches_map.png", width = 7, height = 5)
 
 
+## Creating an interactive map using the leaflet package ----
+# Learining how to use leaflet
+install.packages("leaflet")
+library(leaflet)
+
+leaflet() %>% addTiles() %>% 
+   addCircleMarkers(data = beaches, lat = ~beach_latitude, lng = ~beach_longitude)
 
 
 
+# Adjusting point size
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = beaches, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
+
+
+# Making the points interactive
+# Adding data to display when points are clicked
+
+
+# Going to create a new column for the popup information in the beaches dataset 
+# Possibly add density of cigarette related litter?
+
+
+beaches <- beaches %>% 
+   mutate(popup_info = paste(beach_name, "<br/>", beach_county, "<br/>", beach_region))
+
+
+# Adding the popup information to the map 
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = beaches, 
+                    lat = ~beach_latitude, 
+                    lng = ~beach_longitude, radius = 1,
+                    popup = ~popup_info)
+
+
+# Create a palette to colour points by cigarette related litter density
+
+colours
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# sf and mapview packages
 
 # Spatial analysis
 beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
