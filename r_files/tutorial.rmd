@@ -9,13 +9,13 @@ output:
 
 <br>
 
-#### This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on spatial data and different ways to visualise it.
+#### This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on a specific type of spatial data: point data, and different ways to visualise it without diving into the theory behind more complex spatial objects such as line polygon and raster data. If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
 
 ---
 
 ### Tutorial Aims:
 ##### 1. Data preparation and wrangling for spatial visualisation
-##### 2. Creating basic maps using ggplot2
+##### 2. Creating basic maps with point data using ggplot2
 ##### 3. Creating interactive maps using the mapview package
 ##### 4. ...
 
@@ -40,7 +40,7 @@ This data is provided by the Great British Beach Clean ...
 
 ### Required packages
 
-We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which can be used for visualisation.
+We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which we will use for visualisation of point data.
 
 The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may have unorganised column names.
 
@@ -137,7 +137,7 @@ Here we specify the coordinates (longitude and latitude) of our points within th
 
 
 
-
+Now for the more interactive part!
 
 
 ---
@@ -161,4 +161,10 @@ mapview(beaches_obj, zcol = 'beach_region')
 ```
 
 
+
+
+### Supplementary material 
+Here is an introduction to the different types of spatial data you could be working with in the future. 
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/nVr4BC0C_oQ/0.jpg)](https://www.youtube.com/watch?v=nVr4BC0C_oQ)
 
