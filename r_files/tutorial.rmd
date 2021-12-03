@@ -3,8 +3,9 @@ title: "Creating **static and interactive** maps in R for beginners"
 author: "Giada Leone"
 date: "14/11/2021"
 output:
-  html_document: default
-  pdf_document: default
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
 ---
 
 <br>
