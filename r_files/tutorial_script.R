@@ -86,23 +86,6 @@ ggplot(beaches, aes(x = beach_longitude,
    labs(colour = "UK Regions",  # Changing legend title
         title = "Great British Beach Clean surveys in the UK")  # Informative title
 
-
-(map1 <- ggplot(beaches,
-               aes(x = beach_longitude,
-                   y = beach_latitude, 
-                   colour = beach_region)) +
-   borders("world", colour = "grey5", fill = "black", size = 0.2) +
-   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
-   theme_map() +
-   geom_point(size = 1) +
-   theme(plot.title = element_text(size = 12, hjust = 0.5),
-         legend.position = c(0.77, 0.4),
-         legend.box.background = element_rect(color = 'grey', size = 0.5)) +
-   labs(title = "Beach Locations by Region",
-        colour = "UK Regions"))
-
-
-
 ggsave("outputs/beaches_map.png", width = 7, height = 5)
 
 

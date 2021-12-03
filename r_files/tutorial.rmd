@@ -182,23 +182,20 @@ ggplot(beaches, aes(x = beach_longitude,
         title = "Great British Beach Clean surveys in the UK")  # Informative title
 ```
 
+That looks much better than it did before! Now, you have been equipped with some of the basic tools to create static maps with point data in ggplot. 
+
+While maps like this can be very useful for reports, interactive maps offer the ability to make maps much more informative by including specifications for each of the points!
+
+---
+
+### Creating an interactive map with leaflet
+
+In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package
+
+Lets start by ...
 
 
-```{r}
-(map <- ggplot(beaches,
-               aes(x = beach_longitude,
-                   y = beach_latitude, 
-                   colour = beach_region)) +
-   borders("world", colour = "grey5", fill = "black", size = 0.2) +
-   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
-   theme_map() +
-   geom_point(size = 1) +
-   theme(plot.title = element_text(size = 12, hjust = 0.5),
-         legend.position = c(0.77, 0.4),
-         legend.box.background = element_rect(color = 'grey', size = 0.5)) +
-   labs(title = "Beach Locations by Region",
-        colour = "UK Regions"))
-```
+
 
 
 
