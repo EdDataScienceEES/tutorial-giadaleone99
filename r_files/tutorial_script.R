@@ -31,16 +31,16 @@ beaches <- beaches %>% mutate_if(is.character, as.factor) %>%
 
 # CREATING A STATIC MAP ----
 
-# Basic map
-ggplot() +
-   borders("world", colour = "black") +
-   theme_bw()
-
+# Basic world map
+ggplot() +                                # Calling ggplot()
+   borders("world", colour = "black") +   # Plotting world borders in black
+   theme_map()                            # Clean map theme (no axes, background or grid)
+         
 # Zoom in to UK 
 ggplot() +
    borders("world", colour = "black") +
    coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +  # specifying coordinates to zoom
-   theme_map()  # Gets rid of default long and lat axes and grids
+   theme_map()  
 
 # Adding the surveyed beaches within the aes() function
 ggplot(beaches, aes(x = beach_longitude,
@@ -50,8 +50,6 @@ ggplot(beaches, aes(x = beach_longitude,
    geom_point(size = 1) +
    theme_map() 
    
-
-
 
 # Changing map background
 ggplot(beaches, aes(x = beach_longitude,
