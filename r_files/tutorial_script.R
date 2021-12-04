@@ -119,11 +119,11 @@ combo <- left_join(surveys, num_surveys)
 # Divide the total CRL by the number of surveys done for each beach --> average
 # Divide average CRL by 100 to obtain CRL density/100m
 combo <- combo %>% 
-   mutate(average_crl = round(total_crl/n),  # Rounding whole number
-          crl_density = round(average_crl/100, 2))
+   mutate(average_crl = round(total_crl/n))  # Rounding whole number
+          
    
 # Creating a new dataframe with the extra information we calculated
-beaches2 <- left_join(beaches, combo)
+new_beaches <- left_join(beaches, combo)
 
 
 
@@ -131,22 +131,22 @@ beaches2 <- left_join(beaches, combo)
 # Learning how to use leaflet
 
 leaflet() %>% addTiles() %>% 
-   addCircleMarkers(data = beaches2, lat = ~beach_latitude, lng = ~beach_longitude)
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude)
 
 # Adjusting point size
 leaflet() %>% 
    addTiles() %>% 
-   addCircleMarkers(data = beaches2, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
 
 # Making the points interactive
 # Adding column to display data when points are clicked
-beaches2 <- beaches2 %>% 
+new_beaches <- new_beaches %>% 
    mutate(popup_info = paste(beach_name, "<br/>", beach_county, "<br/>", beach_region, "<br/>", "average CRL/100m: ", average_crl ))
 
 # Adding the popup information to the map 
 leaflet() %>% 
    addTiles() %>% 
-   addCircleMarkers(data = beaches2, 
+   addCircleMarkers(data = new_beaches, 
                     lat = ~beach_latitude, 
                     lng = ~beach_longitude, radius = 1,
                     popup = ~popup_info)
@@ -154,23 +154,23 @@ leaflet() %>%
 
 # Colour points based on average CRL density on the beach
 colours <- c("#005AB5", "#DC3200")  # Lower and upper colours of palette
-                                    # These are colourblind friendly
+                                    # These are colour blind friendly
 
 
 # Creating a palette using the previously created colours object
 # Palette is created for average crl_density so that beaches with high 
 # CRL densities will be coloured in red and beaches with lower densities in blue
-pal <- colorFactor(colours, beaches2$crl_density)
+pal <- colorFactor(colours, new_beaches$average_crl)
 
 
 # Adding the coloured points to the map
 leaflet() %>% 
    addTiles() %>% 
-   addCircleMarkers(data = beaches2, 
+   addCircleMarkers(data = new_beaches, 
                     lat = ~beach_latitude, 
                     lng = ~beach_longitude, radius = 1,
                     popup = ~popup_info,
-                    color = ~pal(crl_density)) 
+                    color = ~pal(average_crl)) 
    
 
 

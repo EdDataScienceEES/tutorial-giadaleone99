@@ -6,6 +6,9 @@ output:
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
+    toc: true
+---
+
 ---
 
 <br>
@@ -14,11 +17,13 @@ output:
 
 ---
 
-### Tutorial Aims:
+### Tutorial Aims
 ##### 1. Data preparation and wrangling for spatial visualisation
 ##### 2. Creating basic maps with point data using ggplot2
 ##### 3. Creating interactive maps using the mapview package
 ##### 4. Challenge yourself try it on another dataset
+
+---
 
 ---
 
@@ -31,7 +36,7 @@ Once you open Rstudio you need to create a project to include all of the files r
 
 Your Rstudio project will open up and now you can create a new script by typing 'ctrl + shift + N' on windows or 'command + shift + N' on Mac or simply by using the global toolbar.
 
-### Downloading the files
+#### Downloading the files
 
 To download the necessary dataset you can clone or download the [repository](https://github.com/EdDataScienceEES/tutorial-giadaleone99) by clicking on the green 'Code' button and then clicking on 'download ZIP'. Next you can unzip the folder and move the data file 'beachwatch_data.csv' into the project folder/directory that you created previously.
 
@@ -39,7 +44,7 @@ This data is provided by the Great British Beach Clean ...
 
 ---
 
-### Required packages
+#### Required packages
 
 We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which we will use for visualisation of point data.
 
@@ -192,37 +197,132 @@ While maps like this can be very useful for reports, interactive maps offer the 
 
 In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package
 
-Lets start by ...
+Lets start by calculating beach average cigarette litter density between 2008 - 2018
+
+To do this we will group by beach ID, then sum cig stubbs and packets then divide this by the number of surveys for that beach to obtain an average. 
+
+Here we are going to create 2 separate data frames, so we can learn how to combine them by a common column using left_join()
+
+```{r}
+# Creating a dataframe with a column for total CRL
+surveys <- beaches %>% 
+   group_by(beach_id) %>% 
+   summarise(total_crl = sum(paper_cardboard_cigarette_packets, paper_cardboard_cigarette_stubs)) %>% 
+   ungroup() 
+
+# Dataframe for number of surveys done for each beach (2008-2018)
+num_surveys <- beaches %>% 
+   group_by(beach_id) %>% 
+   count(beach_id) %>% 
+   ungroup()
+```
+
+Now we will merge these two data frames using the function left_join(). Since the two data frames have a column name in common, they are joined by that column.
+
+```{r, message=FALSE}
+combo <- left_join(surveys, num_surveys)
+```
 
 
+Now let's create a new column for average CRL using mutate() by dividing the total CRL by the number of surveys done for each beach --> average_crl
 
 
+```{r}
+# Overwriting the combo data frame
+combo <- combo %>% 
+   mutate(average_crl = round(total_crl/n))  # Round to whole number
+```
 
+Now we can add this new informative data frame we have created to our 'beaches' data frame. We will call the object new_beaches so that we still have the original version of the data frame. 
 
-
+```{r, message=FALSE}
+# Creating a new dataframe with the extra information we calculated
+new_beaches <- left_join(beaches, combo)
+```
 
 Now for the more interactive part!
+
+```{r}
+leaflet() %>% addTiles() %>% 
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude)
+
+```
+
+We can see from the output that points are too big and they are indistinguishable so we can make them smaller by specifying the radius.
+
+```{r}
+# Adjusting point size
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
+```
+
+Now that we have made the points a reasonable size, you can try clicking on the points, as you can see nothing happens. We can actually create some 'pop up' information to be displayed for the individual points. 
+
+```{r}
+# Creating column to display data when points are clicked
+new_beaches <- new_beaches %>% 
+   mutate(popup_info = paste(beach_name, "<br/>", beach_county, "<br/>", beach_region, "<br/>", "average CRL/100m: ", average_crl ))
+
+```
+
+Now, in this map, you should be able to click the points and view the popup information which tells you the beach name, the county and the region as well as the average CRL count per 100m
+
+```{r}
+# Adding the popup information to the map 
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, 
+                    lat = ~beach_latitude, 
+                    lng = ~beach_longitude, radius = 1,
+                    popup = ~popup_info)
+```
+
+We can also add some colour to the points so that beaches with higher average CRL counts per 100m can be identified more easily. 
+
+First we need to specify the range of colours and create a colour palette. 
+
+```{r}
+colours <- c("#005AB5", "#DC3200")  # Lower and upper colours of palette
+                                    # These are colour blind friendly
+
+# Creating palette using above colours for average_crl
+pal <- colorFactor(colours, new_beaches$average_crl)
+```
+
+Now that we have created this palette, we can add it to the interactive map. As you can see, now the beaches with the highest average CRL counts are represented by red dots and lower counts represented by light blue
+
+```{r}
+# Adding the coloured points to the map
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, 
+                    lat = ~beach_latitude, 
+                    lng = ~beach_longitude, radius = 1,
+                    popup = ~popup_info,
+                    color = ~pal(average_crl)) 
+```
+
+
+If you are looking for a quicker way to do this you can try using the mapview() package which ....
+
+Creating a spatial object 
+
+```{r}
+# Spatial analysis
+beaches_obj <- st_as_sf(new_beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
+```
+
+
+```{r}
+mapview(beaches_obj, zcol = 'average_crl')
+```
+
+
 
 
 ---
 
-Spatial analysis 
-```{r, results='hide', warning=FALSE}
-beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
-
-# examine the sf object
-beaches_obj
-str(beaches_obj)
-
-plot(beaches_obj)
-
-plot(st_geometry(beaches_obj))
-```
-
-Interactive map 
-```{r}
-mapview(beaches_obj, zcol = 'beach_region')
-```
 
 
 
