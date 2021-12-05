@@ -2,7 +2,7 @@
 
 ### This tutorial will teach you how to create _static_ and _interactive_ maps in R!
 
-### You can follow this link to access the tutorial website: https://eddatascienceees.github.io/tutorial-giadaleone99/maps_tutorial.html 
+### Click to access my [Maps Tutorial](https://eddatascienceees.github.io/tutorial-giadaleone99/maps_tutorial.html )
 
 This tutorial is aimed at people who have some experience in using R and would like to try spatial data visualisation by using R as a GIS like software using specific packages.
 
