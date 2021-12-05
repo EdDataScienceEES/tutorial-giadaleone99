@@ -1,7 +1,7 @@
 ---
-title: "Creating **static and interactive** maps in R for beginners"
+title: "Creating **Static and Interactive** Maps in R for Beginners"
 author: "Giada Leone"
-date: "14/11/2021"
+date: "Published 06/12/2021"
 output:
   prettydoc::html_pretty:
     theme: cayman
@@ -19,7 +19,6 @@ output:
 ##### 1. Data preparation and wrangling for spatial visualisation
 ##### 2. Creating basic *static* maps with point data using ggplot2
 ##### 3. Creating *interactive* maps using the leaflet package
-##### 4. Challenge yourself try it on another dataset
 
 ---
 
@@ -193,7 +192,7 @@ While maps like this can be very useful for reports, interactive maps offer the 
 
 In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package.
 
-Lets start by calculating beach average cigarette litter density between 2008 - 2018.
+Lets start by calculating beach average cigarette related litter (CRL) between 2008 - 2018.
 
 To do this we will group by beach_id, then sum cig stubbs and packets and finally divide this by the number of surveys for that beach to obtain an average. 
 
@@ -301,10 +300,16 @@ leaflet() %>%
                     color = ~pal(average_crl)) 
 ```
 
+And there is our final map! well done for making it to the end of the tutorial, you are a champ!
+
 --- 
 
 ### Supplementary material 
 Here is an introduction to the different types of spatial data you could be working with in the future. 
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/nVr4BC0C_oQ/0.jpg)](https://www.youtube.com/watch?v=nVr4BC0C_oQ)
+
+<br>
+
+If you would like to learn more about these you can have a look at the coding club tutorial on [Geospatial Vector Data](https://ourcodingclub.github.io/tutorials/spatial-vector-sf/).
 
