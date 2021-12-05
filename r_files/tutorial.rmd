@@ -11,36 +11,35 @@ output:
 
 ---
 
-<br>
-
-#### This tutorial is aimed at people who have little experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on a specific type of spatial data: point data, and different ways to visualise it without diving into the theory behind more complex spatial objects such as line polygon and raster data. If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
+#### This tutorial is aimed at people who have some experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on a specific type of spatial data: *point data*, and different ways to visualise it without diving into the theory behind more complex spatial objects such as line polygon and raster data. If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
 
 ---
 
 ### Tutorial Aims
 ##### 1. Data preparation and wrangling for spatial visualisation
-##### 2. Creating basic maps with point data using ggplot2
-##### 3. Creating interactive maps using the mapview package
+##### 2. Creating basic *static* maps with point data using ggplot2
+##### 3. Creating *interactive* maps using the leaflet package
 ##### 4. Challenge yourself try it on another dataset
 
 ---
 
----
-
-Here is a quick introduction to spatial data
+#### Here is a quick introduction to spatial data
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/F7U-nJj9yUg/0.jpg)](https://www.youtube.com/watch?v=F7U-nJj9yUg)
 
+---
 
-Once you open Rstudio you need to create a project to include all of the files related to this tutorial by clicking on the create a project symbol ![](../other/Rproj_screenshot.png) in the global toolbar at the top of an Rstudio window. Click on 'new directory' and 'new project' save the folder on your desktop and give it a descriptive name such as 'maps_tutorial'.
+#### Let's set up your project folder/ directory
+
+Once you open Rstudio you need to create a project to include all of the files related to this tutorial by clicking on the create a project symbol ![](../other/Rproj_screenshot.png) in the global toolbar at the top of an Rstudio window. Click on 'new directory' and 'new project', save the folder on your desktop and give it a descriptive name such as 'maps_tutorial'.
 
 Your Rstudio project will open up and now you can create a new script by typing 'ctrl + shift + N' on windows or 'command + shift + N' on Mac or simply by using the global toolbar.
 
-#### Downloading the files
+---
 
-To download the necessary dataset you can clone or download the [repository](https://github.com/EdDataScienceEES/tutorial-giadaleone99) by clicking on the green 'Code' button and then clicking on 'download ZIP'. Next you can unzip the folder and move the data file 'beachwatch_data.csv' into the project folder/directory that you created previously.
+#### Downloading the files 
 
-This data is provided by the Great British Beach Clean ...
+To download the necessary dataset you can clone or download the [repository](https://github.com/EdDataScienceEES/tutorial-giadaleone99) by clicking on the green 'Code' button and then clicking on 'download ZIP'. Next you can unzip the folder and move the data file 'beachwatch_data.csv' into the project folder/directory that you created previously. This data is provided by the [Marine Conservation Society](https://www.mcsuk.org/) as part of the Great British Beach Clean initiative.
 
 ---
 
@@ -50,12 +49,7 @@ We will be using the ```tidyverse``` to do data wrangling and preparing the data
 
 The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may have unorganised column names.
 
-
-The ```leaflet``` package is quite similar to mapview, which does some of the same things, however, we will be creating a map in both because there are always different ways to do things in R.
-
-The ```sf``` package will be used in combination with ```mapview```. Simple features include geometries like points and lines. If you have any troubles installing the ```sf``` package you can check out this link for suggestions: https://r-spatial.github.io/sf/ 
-
-The package ```mapview``` is used to visualise spatial data in an interactive way in R. It is intended for quick and easy interactive visualisation as opposed to producing high quality presentation maps.
+The ```leaflet``` package allows us to create interactive and informative maps.
 
 If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include the names within the "" before loading them with the ```library(packagename)``` function.
 
@@ -66,9 +60,7 @@ If you have never used these packages before you will need to install them by us
 library(tidyverse)  # Data wrangling & includes ggplot2
 library(janitor)    # Cleaning datasets
 library(ggthemes)   # Themes for ggplot2
-library(leaflet)    # Interactive map1
-library(sf)         # Simple Features
-library(mapview)    # Interactive map2
+library(leaflet)    # Interactive map
 ```
 
 ---
@@ -77,9 +69,15 @@ library(mapview)    # Interactive map2
 
 Here we are importing the file 'beachwatch_data.csv' which you previously moved to your directory. We use the ```read.csv()``` function and assign the dataframe to object called 'beaches'. 
 
-```{r, results='hide'}
-beaches <- read.csv("../data/beachwatch_data.csv", header = TRUE)
+```{r, results='hide', echo=FALSE}
+beaches <- read.csv("../data/beachwatch_data.csv")
 str(beaches)  # Checking data structure
+```
+
+Note that if you previously saved the data file in a subfolder you will have to specify the filepath to import the data. For example, if you moved the csv file to a folder names 'data' within the repo, you should write ```beaches <- read.csv(data/beachwatch_data.csv")```
+
+```{r, eval=FALSE}
+beaches <- read.csv("beachwatch_data.csv")
 ```
 
 ---
@@ -140,7 +138,6 @@ Now that we have zoomed into our area of interest, we can plot the points of the
 
 We also filled the land with a lightgrey colour to make it stand out more and coloured the background blue.
 
-<br>
 
 ```{r}
 # Adding spatial data points (beaches)
@@ -153,9 +150,8 @@ ggplot(beaches, aes(x = beach_longitude,
    theme(panel.background = element_rect(fill = "aliceblue"))
 ```
 
-<br>
 
-Here we are telling ggplot to colour the points depending on beach region for which we have a column in the dataset.
+In the code below we are telling ggplot to colour the points depending on beach region for which we have a column in the dataset.
 
 ```{r}
 # Colouring points based on beach region
@@ -195,13 +191,13 @@ While maps like this can be very useful for reports, interactive maps offer the 
 
 ### Creating an interactive map with leaflet
 
-In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package
+In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package.
 
-Lets start by calculating beach average cigarette litter density between 2008 - 2018
+Lets start by calculating beach average cigarette litter density between 2008 - 2018.
 
-To do this we will group by beach ID, then sum cig stubbs and packets then divide this by the number of surveys for that beach to obtain an average. 
+To do this we will group by beach_id, then sum cig stubbs and packets and finally divide this by the number of surveys for that beach to obtain an average. 
 
-Here we are going to create 2 separate data frames, so we can learn how to combine them by a common column using left_join()
+Here we are going to create 2 separate data frames, so we can learn how to combine them by a common column using left_join().
 
 ```{r}
 # Creating a dataframe with a column for total CRL
@@ -224,7 +220,7 @@ combo <- left_join(surveys, num_surveys)
 ```
 
 
-Now let's create a new column for average CRL using mutate() by dividing the total CRL by the number of surveys done for each beach --> average_crl
+Now let's create a new column for average CRL using mutate() by dividing the total CRL by the number of surveys done for each beach --> average_crl.
 
 
 ```{r}
@@ -240,7 +236,7 @@ Now we can add this new informative data frame we have created to our 'beaches' 
 new_beaches <- left_join(beaches, combo)
 ```
 
-Now for the more interactive part!
+Now for the more interactive part! Here, we are using the leaflet function then ```addTiles()``` which adds the base map. Next we are specifying to ```addCircleMarkers``` (our beach locations) based on the new_beaches data frame and the specific latitude and longitude columns.
 
 ```{r}
 leaflet() %>% addTiles() %>% 
@@ -248,7 +244,7 @@ leaflet() %>% addTiles() %>%
 
 ```
 
-We can see from the output that points are too big and they are indistinguishable so we can make them smaller by specifying the radius.
+We can see from the output that points are too big and they are indistinguishable, so we can make them smaller by specifying the radius as shown in the code.
 
 ```{r}
 # Adjusting point size
@@ -257,7 +253,9 @@ leaflet() %>%
    addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
 ```
 
-Now that we have made the points a reasonable size, you can try clicking on the points, as you can see nothing happens. We can actually create some 'pop up' information to be displayed for the individual points. 
+Now that we have made the points a reasonable size, you can try clicking on the points, as you can see nothing happens. We can actually create some 'pop-up' information to be displayed for the individual points. 
+
+This can be done by pasting the contents of the specific columns followed by ```"<br/>"``` to get them on different lines.
 
 ```{r}
 # Creating column to display data when points are clicked
@@ -266,7 +264,7 @@ new_beaches <- new_beaches %>%
 
 ```
 
-Now, in this map, you should be able to click the points and view the popup information which tells you the beach name, the county and the region as well as the average CRL count per 100m
+Now, in this map, you should be able to click the points and view the pop-up information which tells you the beach name, the county and the region as well as the average CRL count per 100m
 
 ```{r}
 # Adding the popup information to the map 
@@ -303,29 +301,7 @@ leaflet() %>%
                     color = ~pal(average_crl)) 
 ```
 
-
-If you are looking for a quicker way to do this you can try using the mapview() package which ....
-
-Creating a spatial object 
-
-```{r}
-# Spatial analysis
-beaches_obj <- st_as_sf(new_beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
-```
-
-
-```{r}
-mapview(beaches_obj, zcol = 'average_crl')
-```
-
-
-
-
----
-
-
-
-
+--- 
 
 ### Supplementary material 
 Here is an introduction to the different types of spatial data you could be working with in the future. 

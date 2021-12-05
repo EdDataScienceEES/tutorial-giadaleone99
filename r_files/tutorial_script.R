@@ -13,11 +13,13 @@ library(leaflet)
 library(ggthemes)
 library(sf)
 library(mapview)
+library(leafpop)
 
 # IMPORT AND CLEAN DATA ----
 # Load the data
-beaches <- read.csv("data/beachwatch_data.csv", header = TRUE)
+beaches <- read.csv("data/beachwatch_data.csv")
 str(beaches)
+
 
 # Preparing the data 
 beaches <- beaches %>% clean_names()   # cleaning data frame column names
@@ -130,6 +132,8 @@ new_beaches <- left_join(beaches, combo)
 ## Creating an interactive map using the leaflet package ----
 # Learning how to use leaflet
 
+leaflet() %>% addTiles
+
 leaflet() %>% addTiles() %>% 
    addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude)
 
@@ -176,7 +180,7 @@ leaflet() %>%
 
 
 
-# sf and mapview packages ----
+# sf and mapview packages EXTRA ----
 
 # Spatial analysis
 beaches_obj <- st_as_sf(beaches, coords =  c('beach_longitude', 'beach_latitude'), crs = 4326)
@@ -200,6 +204,7 @@ plot(filt_data$geometry)
 
 # Interactive map
 mapview(beaches_obj, zcol = 'beach_region')
+
 
 
 
