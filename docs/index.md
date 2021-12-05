@@ -1,37 +1,296 @@
-## Welcome to GitHub Pages
+#### This tutorial is aimed at people who have some experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on a specific type of spatial data: *point data*, and different ways to visualise it without diving into the theory behind more complex spatial objects such as line polygon and raster data. If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
 
-You can use the [editor on GitHub](https://github.com/EdDataScienceEES/tutorial-giadaleone99/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+---
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Tutorial Aims
+##### 1. Data preparation and wrangling for spatial visualisation
+##### 2. Creating basic *static* maps with point data using ggplot2
+##### 3. Creating *interactive* maps using the leaflet package
+##### 4. Challenge yourself try it on another dataset
 
-### Markdown
+---
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+#### Here is a quick introduction to spatial data
 
-```markdown
-Syntax highlighted code block
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/F7U-nJj9yUg/0.jpg)](https://www.youtube.com/watch?v=F7U-nJj9yUg)
 
-# Header 1
-## Header 2
-### Header 3
+---
 
-- Bulleted
-- List
+#### Let's set up your project folder/ directory
 
-1. Numbered
-2. List
+Once you open Rstudio you need to create a project to include all of the files related to this tutorial by clicking on the create a project symbol ![](../other/Rproj_screenshot.png) in the global toolbar at the top of an Rstudio window. Click on 'new directory' and 'new project', save the folder on your desktop and give it a descriptive name such as 'maps_tutorial'.
 
-**Bold** and _Italic_ and `Code` text
+Your Rstudio project will open up and now you can create a new script by typing 'ctrl + shift + N' on windows or 'command + shift + N' on Mac or simply by using the global toolbar.
 
-[Link](url) and ![Image](src)
+---
+
+#### Downloading the files 
+
+To download the necessary dataset you can clone or download the [repository](https://github.com/EdDataScienceEES/tutorial-giadaleone99) by clicking on the green 'Code' button and then clicking on 'download ZIP'. Next you can unzip the folder and move the data file 'beachwatch_data.csv' into the project folder/directory that you created previously. This data is provided by the [Marine Conservation Society](https://www.mcsuk.org/) as part of the Great British Beach Clean initiative.
+
+---
+
+#### Required packages
+
+We will be using the ```tidyverse``` to do data wrangling and preparing the dataset, it also includes the ```ggplot2``` package which we will use for visualisation of point data.
+
+The ```janitor``` package is a useful tool to clean datasets which will come in handy when handling public datasets which may have unorganised column names.
+
+The ```leaflet``` package allows us to create interactive and informative maps.
+
+If you have never used these packages before you will need to install them by using the ```install.packages("packagename")``` function and include the names within the "" before loading them with the ```library(packagename)``` function.
+
+```{r, warning=FALSE, message=FALSE}
+# Libraries ----
+# install.packages("tidyverse")
+   
+library(tidyverse)  # Data wrangling & includes ggplot2
+library(janitor)    # Cleaning datasets
+library(ggthemes)   # Themes for ggplot2
+library(leaflet)    # Interactive map
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+---
 
-### Jekyll Themes
+### Importing the dataset
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/EdDataScienceEES/tutorial-giadaleone99/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Here we are importing the file 'beachwatch_data.csv' which you previously moved to your directory. We use the ```read.csv()``` function and assign the dataframe to object called 'beaches'. 
 
-### Support or Contact
+```{r, results='hide', echo=FALSE}
+beaches <- read.csv("../data/beachwatch_data.csv")
+str(beaches)  # Checking data structure
+```
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Note that if you previously saved the data file in a subfolder you will have to specify the filepath to import the data. For example, if you moved the csv file to a folder names 'data' within the repo, you should write ```beaches <- read.csv(data/beachwatch_data.csv")```
+
+```{r, eval=FALSE}
+beaches <- read.csv("beachwatch_data.csv")
+```
+
+---
+
+### Preparing the data
+
+Here we are organising the data by firstly cleaning the column names with the clean_names() function from the janitor package. Next we are deleting the unnecessary columns from the dataframe as well as dropping columns which have NA values.
+
+
+```{r}
+# cleaning data frame column names
+beaches <- beaches %>% clean_names() 
+
+# deleting unused columns
+beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  
+
+# dropping columns which have NA values
+beaches <- drop_na(beaches)  
+
+```
+
+Changing data types: if variables are characters we are converting them to factors or 'categorical' data types, and if variables are integers we convert them to numeric. This is important for subsequent steps to work. R often requires variables to be a specific data type.
+
+```{r}
+beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
+                       mutate_if(is.integer, as.numeric)
+
+```
+
+---
+
+### Creating a static map with ggplot2
+
+Let's use ggplot to create a map to show us all the beaches around the UK which have data from Great British Beach Clean surveys.
+
+We will gradually make this map step by step so you can follow the map making process.
+
+```{r}
+# Basic world map
+ggplot() +                                # Calling ggplot()
+   borders("world", colour = "black") +   # Plotting world borders in black
+   theme_map()                            # map theme (no long & lat, white background )
+```
+<br>
+Next, we will zoom in to the UK by setting the x and y limits within the ```coord_cartesian()``` function.
+
+```{r}
+# Zoom in to UK 
+ggplot() +
+   borders("world", colour = "black") +
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +  # specifying coordinates to zoom
+   theme_map()
+```
+
+<br>
+
+Now that we have zoomed into our area of interest, we can plot the points of the UK beaches surveyed in the dataset by specifying the coordinates (longitude and latitude) of our points within the ```aes()``` function.
+
+We also filled the land with a lightgrey colour to make it stand out more and coloured the background blue.
+
+
+```{r}
+# Adding spatial data points (beaches)
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude)) +
+   borders("world", colour = "black", fill = "lightgrey") +  # changing the colour of the map
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(panel.background = element_rect(fill = "aliceblue"))
+```
+
+
+In the code below we are telling ggplot to colour the points depending on beach region for which we have a column in the dataset.
+
+```{r}
+# Colouring points based on beach region
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude,
+                    colour = beach_region)) +                  # Colouring by beach region
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(panel.background = element_rect(fill = "aliceblue"))  # Changing background colour
+```
+
+We can see that the default location of the legend overlaps with the map, so we move the legend by specifying the ```legend.position()``` withing the theme function. Here we also add an informative title and change the legend title and box.
+
+```{r}
+ggplot(beaches, aes(x = beach_longitude,
+                    y = beach_latitude,
+                    colour = beach_region)) +
+   borders("world", colour = "black", fill = "lightgrey") +  
+   coord_cartesian(xlim = c(-10, 3), ylim = c(50.3, 59)) +
+   geom_point(size = 1) +
+   theme_map() +
+   theme(plot.title = element_text(size = 12, hjust = 0.5, face = 'bold'),  # title characteristics
+         panel.background = element_rect(fill = "aliceblue"),
+         legend.position = c(0.77, 0.45),                      
+         legend.box.background = element_rect(color = 'grey', size = 0.5)) +  # Adding a border
+   labs(colour = "UK Regions",  # Changing legend title
+        title = "Great British Beach Clean surveys in the UK")  # Informative title
+```
+
+That looks much better than it did before! Now, you have been equipped with some of the basic tools to create static maps with point data in ggplot. 
+
+While maps like this can be very useful for reports, interactive maps offer the ability to make maps much more informative by including specifications for each of the points!
+
+---
+
+### Creating an interactive map with leaflet
+
+In this section we will need to do some more data wrangling and synthesis in order to create an interactive map using the ```leaflet``` package.
+
+Lets start by calculating beach average cigarette litter density between 2008 - 2018.
+
+To do this we will group by beach_id, then sum cig stubbs and packets and finally divide this by the number of surveys for that beach to obtain an average. 
+
+Here we are going to create 2 separate data frames, so we can learn how to combine them by a common column using left_join().
+
+```{r}
+# Creating a dataframe with a column for total CRL
+surveys <- beaches %>% 
+   group_by(beach_id) %>% 
+   summarise(total_crl = sum(paper_cardboard_cigarette_packets, paper_cardboard_cigarette_stubs)) %>% 
+   ungroup() 
+
+# Dataframe for number of surveys done for each beach (2008-2018)
+num_surveys <- beaches %>% 
+   group_by(beach_id) %>% 
+   count(beach_id) %>% 
+   ungroup()
+```
+
+Now we will merge these two data frames using the function left_join(). Since the two data frames have a column name in common, they are joined by that column.
+
+```{r, message=FALSE}
+combo <- left_join(surveys, num_surveys)
+```
+
+
+Now let's create a new column for average CRL using mutate() by dividing the total CRL by the number of surveys done for each beach --> average_crl.
+
+
+```{r}
+# Overwriting the combo data frame
+combo <- combo %>% 
+   mutate(average_crl = round(total_crl/n))  # Round to whole number
+```
+
+Now we can add this new informative data frame we have created to our 'beaches' data frame. We will call the object new_beaches so that we still have the original version of the data frame. 
+
+```{r, message=FALSE}
+# Creating a new dataframe with the extra information we calculated
+new_beaches <- left_join(beaches, combo)
+```
+
+Now for the more interactive part! Here, we are using the leaflet function then ```addTiles()``` which adds the base map. Next we are specifying to ```addCircleMarkers``` (our beach locations) based on the new_beaches data frame and the specific latitude and longitude columns.
+
+```{r}
+leaflet() %>% addTiles() %>% 
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude)
+
+```
+
+We can see from the output that points are too big and they are indistinguishable, so we can make them smaller by specifying the radius as shown in the code.
+
+```{r}
+# Adjusting point size
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, lat = ~beach_latitude, lng = ~beach_longitude, radius = 1)
+```
+
+Now that we have made the points a reasonable size, you can try clicking on the points, as you can see nothing happens. We can actually create some 'pop-up' information to be displayed for the individual points. 
+
+This can be done by pasting the contents of the specific columns followed by ```"<br/>"``` to get them on different lines.
+
+```{r}
+# Creating column to display data when points are clicked
+new_beaches <- new_beaches %>% 
+   mutate(popup_info = paste(beach_name, "<br/>", beach_county, "<br/>", beach_region, "<br/>", "average CRL/100m: ", average_crl ))
+
+```
+
+Now, in this map, you should be able to click the points and view the pop-up information which tells you the beach name, the county and the region as well as the average CRL count per 100m
+
+```{r}
+# Adding the popup information to the map 
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, 
+                    lat = ~beach_latitude, 
+                    lng = ~beach_longitude, radius = 1,
+                    popup = ~popup_info)
+```
+
+We can also add some colour to the points so that beaches with higher average CRL counts per 100m can be identified more easily. 
+
+First we need to specify the range of colours and create a colour palette. 
+
+```{r}
+colours <- c("#005AB5", "#DC3200")  # Lower and upper colours of palette
+                                    # These are colour blind friendly
+
+# Creating palette using above colours for average_crl
+pal <- colorFactor(colours, new_beaches$average_crl)
+```
+
+Now that we have created this palette, we can add it to the interactive map. As you can see, now the beaches with the highest average CRL counts are represented by red dots and lower counts represented by light blue
+
+```{r}
+# Adding the coloured points to the map
+leaflet() %>% 
+   addTiles() %>% 
+   addCircleMarkers(data = new_beaches, 
+                    lat = ~beach_latitude, 
+                    lng = ~beach_longitude, radius = 1,
+                    popup = ~popup_info,
+                    color = ~pal(average_crl)) 
+```
+
+--- 
+
+### Supplementary material 
+Here is an introduction to the different types of spatial data you could be working with in the future. 
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/nVr4BC0C_oQ/0.jpg)](https://www.youtube.com/watch?v=nVr4BC0C_oQ)
