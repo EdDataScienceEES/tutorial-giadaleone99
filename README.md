@@ -2,7 +2,7 @@
 
 This tutorial will teach you how to create _static_ and _interactive_ maps in R!
 
-You can follow this link to access the tutorial website: 
+You can follow this link to access the tutorial website: https://eddatascienceees.github.io/tutorial-giadaleone99/maps_tutorial.html 
 
 
 
