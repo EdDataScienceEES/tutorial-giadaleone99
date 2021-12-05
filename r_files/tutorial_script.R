@@ -1,5 +1,6 @@
 # Tutorial: Creating static and interactive descriptive maps in R
 # Created by Giada Leone
+# Contact me: giada.leone99@outlook.com
 # 14/11/2021
 
 
@@ -11,9 +12,9 @@ library(tidyverse)
 library(janitor)
 library(leaflet)
 library(ggthemes)
-library(sf)
-library(mapview)
-library(leafpop)
+#library(sf)
+#library(mapview)
+#library(leafpop)
 
 # IMPORT AND CLEAN DATA ----
 # Load the data
