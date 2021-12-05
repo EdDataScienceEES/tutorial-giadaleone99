@@ -6,6 +6,8 @@
 
 This tutorial is aimed at people who have some experience in using R and would like to try spatial data visualisation by using R as a GIS like software using specific packages.
 
+If you have any questions regarding the tutorial you can contact me at: giada.leone99@outlook.com
+
 ## Repository Structure 📁
 The subfolders within this repository and their contents
 * [data](https://github.com/EdDataScienceEES/tutorial-giadaleone99/tree/master/data): contains the necessary .csv file to complete the tutorial
