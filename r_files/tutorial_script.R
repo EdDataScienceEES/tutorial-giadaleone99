@@ -23,11 +23,16 @@ str(beaches)
 
 
 # Preparing the data 
+
+colnames(beaches)  # Viewing column names and associated column numbers
+
 beaches <- beaches %>% clean_names()   # cleaning data frame column names
 beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  # deleting unused columns
 beaches <- drop_na(beaches)  # dropping columns which have NA values
 
 # Changing data types
+str(beaches)  # Checking data types
+
 beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
                        mutate_if(is.integer, as.numeric)
 
@@ -53,6 +58,11 @@ ggplot(beaches, aes(x = beach_longitude,
    geom_point(size = 1) +
    theme_map() 
    
+# Removing rogue point in Ireland 
+unique(beaches$beach_region)
+
+beaches <- beaches %>% 
+   filter(beach_region != "Republic of Ireland")
 
 # Changing map background
 ggplot(beaches, aes(x = beach_longitude,
@@ -205,6 +215,8 @@ plot(filt_data$geometry)
 
 # Interactive map
 mapview(beaches_obj, zcol = 'beach_region')
+
+
 
 
 

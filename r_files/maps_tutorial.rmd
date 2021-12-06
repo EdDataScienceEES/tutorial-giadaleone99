@@ -11,7 +11,18 @@ output:
 
 ---
 
-#### This tutorial is aimed at people who have some experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focussing on a specific type of spatial data: *point data*, and different ways to visualise it without diving into the theory behind more complex spatial objects such as line polygon and raster data. If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
+#### This tutorial is aimed at people who have some experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focusing on a specific type of spatial data: *point data*, and different ways to visualise it without diving into the theory behind more complex spatial objects such as lines and polygons.
+
+#### This table summarises the key features of these different types of *vector data* 
+
+![](../other/vectordata_table.png)
+
+
+#### If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
+
+#### There are many different ways to go about spatial mapping in R, and today you will learn one of these ways. <br> <br> To successfully plot spatial point data, the observations in the data frame must be associated with a set of X and Y coordinates which correspond to latitude and longitude.
+
+#### In this tutorial we will be using a dataset from provided by the Marine Conservation Society which collates information from beach clean surveys carried out around the UK. The Great British Beach Clean is a volunteer initiative which encourages social engagement for conservation efforts. The data set includes count data collected for different litter categories for surveys between 2008 - 2018.
 
 ---
 
@@ -25,6 +36,7 @@ output:
 #### Here is a quick introduction to spatial data
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/F7U-nJj9yUg/0.jpg)](https://www.youtube.com/watch?v=F7U-nJj9yUg)
+
 
 ---
 
@@ -73,22 +85,37 @@ beaches <- read.csv("../data/beachwatch_data.csv")
 str(beaches)  # Checking data structure
 ```
 
-Note that if you previously saved the data file in a subfolder you will have to specify the filepath to import the data. For example, if you moved the csv file to a folder names 'data' within the repo, you should write ```beaches <- read.csv(data/beachwatch_data.csv")```
+Note that if you previously saved the data file in a sub-folder you will have to specify the file-path to import the data. For example, if you moved the csv file to a folder names 'data' within the repository, you should write ```beaches <- read.csv(data/beachwatch_data.csv")```
 
 ```{r, eval=FALSE}
 beaches <- read.csv("beachwatch_data.csv")
 ```
 
+Now, let's have a look at the imported data by clicking on the object you created in your environment pane!
+
+![](../other/view_data.png)
+
+A new pane should open, and should look something like this
+
+![](../other/dataframe.png)
+
+You should be able to scroll to the right and see some of the different categories of litter collected. Other important columns in the dataset include the year when the survey was carried out, where the beach is located such as region and county as well as specific beach longitude and latitude.
+
+In the next section, we will be removing some of the columns we do not need, to declutter the data. We will be focusing on cigarette related litter and so we will keep the relevant rows.
+
 ---
 
 ### Preparing the data
 
-Here we are organising the data by firstly cleaning the column names with the clean_names() function from the janitor package. Next we are deleting the unnecessary columns from the dataframe as well as dropping columns which have NA values.
+Here we are organising the data by firstly cleaning the column names with the clean_names() function from the janitor package. It returns column names with lowercase letters and '_' separator.
+Next we are deleting the unnecessary columns from the dataframe, from column 12-109 and from 112-170. We *keep* columns 110 and 112 because as we can see from the console output of the function ```colnames()``` these are the columns for cigarette packets and cigarette stubs. Lastly we drop columns which have NA values.
 
 
-```{r}
+```{r, results='hide'}
 # cleaning data frame column names
 beaches <- beaches %>% clean_names() 
+
+colnames(beaches)  # Viewing column names and associated column numbers
 
 # deleting unused columns
 beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  
@@ -100,7 +127,10 @@ beaches <- drop_na(beaches)
 
 Changing data types: if variables are characters we are converting them to factors or 'categorical' data types, and if variables are integers we convert them to numeric. This is important for subsequent steps to work. R often requires variables to be a specific data type.
 
-```{r}
+```{r, results='hide'}
+str(beaches)  # Checking data types
+
+# Changing data types
 beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
                        mutate_if(is.integer, as.numeric)
 
@@ -133,6 +163,12 @@ ggplot() +
 
 <br>
 
+---
+
+**TIP: If you would like to zoom into another country you can try playing around with the x and y lim values. However, here is a quick cheat sheet I have created to help you out! <br/> <br/>  ![](../other/coords_locations.png){width=50%}** 
+
+---
+
 Now that we have zoomed into our area of interest, we can plot the points of the UK beaches surveyed in the dataset by specifying the coordinates (longitude and latitude) of our points within the ```aes()``` function.
 
 We also filled the land with a lightgrey colour to make it stand out more and coloured the background blue.
@@ -149,6 +185,15 @@ ggplot(beaches, aes(x = beach_longitude,
    theme(panel.background = element_rect(fill = "aliceblue"))
 ```
 
+We can see from the map that there is a rogue point in the West of Ireland! We can remove it by using the filter() function. the ```!=``` operator tells R 'is not equal to' so the function filters, and keeps all the observations except for the one where beach_region is not equal to 'Republic of Ireland'
+
+```{r}
+# Removing rogue point in Ireland 
+beaches <- beaches %>% 
+   filter(beach_region != "Republic of Ireland")  
+```
+
+Now, in the next map, the point will be gone!
 
 In the code below we are telling ggplot to colour the points depending on beach region for which we have a column in the dataset.
 
@@ -212,7 +257,7 @@ num_surveys <- beaches %>%
    ungroup()
 ```
 
-Now we will merge these two data frames using the function left_join(). Since the two data frames have a column name in common, they are joined by that column.
+Now we will merge these two data frames using the function left_join(). Since the two data frames have the 'beach_name' column in common, they are joined by that column.
 
 ```{r, message=FALSE}
 combo <- left_join(surveys, num_surveys)
@@ -263,7 +308,7 @@ new_beaches <- new_beaches %>%
 
 ```
 
-Now, in this map, you should be able to click the points and view the pop-up information which tells you the beach name, the county and the region as well as the average CRL count per 100m
+Now, in this map, you should be able to click the points and view the pop-up information which tells you the beach name, the county and the region as well as the average CRL count per 100m.
 
 ```{r}
 # Adding the popup information to the map 
@@ -300,7 +345,17 @@ leaflet() %>%
                     color = ~pal(average_crl)) 
 ```
 
-And there is our final map! well done for making it to the end of the tutorial, you are a champ!
+And there is our final map!
+If you zoom into edinburgh and find portobello beach, you can see that it has quite a high average count of cigarette related litter!
+
+![](../other/edinburgh_beaches.png)
+
+
+
+well done for making it to the end of the tutorial, you are a champ!ç
+
+If you are keen, you can go ahead and try to make some of your own maps with this dataset. You might want to try visualising the average number of volunteers that specific beaches have. This could be used to see where volunteer efforts could be increased with the option to reaching out to local schools to engage the youth.
+
 
 --- 
 
@@ -312,4 +367,12 @@ Here is an introduction to the different types of spatial data you could be work
 <br>
 
 If you would like to learn more about these you can have a look at the coding club tutorial on [Geospatial Vector Data](https://ourcodingclub.github.io/tutorials/spatial-vector-sf/).
+
+You can access more data from these sources
+
+- https://datadryad.org/
+
+- https://ourworldindata.org/ 
+
+- https://livingplanetindex.org/data_portal
 
