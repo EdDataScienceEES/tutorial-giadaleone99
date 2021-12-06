@@ -352,9 +352,9 @@ If you zoom into edinburgh and find portobello beach, you can see that it has qu
 
 
 
-well done for making it to the end of the tutorial, you are a champ!ç
+Well done for making it to the end of the tutorial, you are a champ!
 
-If you are keen, you can go ahead and try to make some of your own maps with this dataset. You might want to try visualising the average number of volunteers that specific beaches have. This could be used to see where volunteer efforts could be increased with the option to reaching out to local schools to engage the youth.
+If you are keen, you can go ahead and try to make some of your own maps with this dataset. You might want to try visualising the average number of volunteers that specific beaches have. This could be used to see where volunteer efforts could be increased with the option of reaching out to local schools to engage the youth.
 
 
 --- 
