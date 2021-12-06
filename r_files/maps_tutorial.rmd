@@ -185,7 +185,7 @@ ggplot(beaches, aes(x = beach_longitude,
    theme(panel.background = element_rect(fill = "aliceblue"))
 ```
 
-We can see from the map that there is a rogue point in the West of Ireland! We can remove it by using the filter() function. the ```!=``` operator tells R 'is not equal to' so the function filters, and keeps all the observations except for the one where beach_region is not equal to 'Republic of Ireland'
+We can see from the map that there is a rogue point in the West of Ireland! We can remove it by using the filter() function. The ```!=``` operator tells R 'is not equal to' so the function filters, and keeps all the observations except for the one where beach_region is not equal to 'Republic of Ireland'
 
 ```{r}
 # Removing rogue point in Ireland 
