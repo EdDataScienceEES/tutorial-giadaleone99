@@ -11,12 +11,21 @@ output:
 
 ---
 
+### Tutorial Aims
+##### 1. Understanding the importance of open access data
+##### 2. Data preparation and wrangling for spatial visualisation
+##### 3. Creating basic *static* maps with point data using ggplot2
+##### 4. Creating *interactive* maps using the leaflet package
+
+---
+
+### Introduction
+
 #### This tutorial is aimed at people who have some experience in using R and would like to try **spatial data visualisation** by using R as a GIS like software using specific packages. <br> <br> R is very powerful due to its wide applications in statistics, modelling, data visualisation and spatial data. In this tutorial we will be focusing on a specific type of spatial data: *point data*, and different ways to visualise it without diving into the theory behind more complex spatial objects such as lines and polygons.
 
 #### This table summarises the key features of these different types of *vector data* 
 
 ![](../other/vectordata_table.png)
-
 
 #### If you are interested in other types of spatial data have a look at the supplementary material at the end of the tutorial.
 
@@ -24,14 +33,7 @@ output:
 
 #### In this tutorial we will be using a dataset from provided by the Marine Conservation Society which collates information from beach clean surveys carried out around the UK. The Great British Beach Clean is a volunteer initiative which encourages social engagement for conservation efforts. The data set includes count data collected for different litter categories for surveys between 2008 - 2018.
 
----
-
-### Tutorial Aims
-##### 1. Data preparation and wrangling for spatial visualisation
-##### 2. Creating basic *static* maps with point data using ggplot2
-##### 3. Creating *interactive* maps using the leaflet package
-
----
+#### Unfortunately this dataset has not been made publicly available and so you will only be able to access it by downloading my repository. There are benefits to open access data, for example, they encourage transparency amongst the scientific community. This data was provided to me individually for my dissertation project. Considering this data is collected by a charity, I hope that in future years the data can be made publically available which can also promote awareness of the extent of the littering problem we as communities create. Some sources for open access data have been provided in the at the end of the tutorial.
 
 #### Here is a quick introduction to spatial data
 
@@ -112,15 +114,16 @@ Next we are deleting the unnecessary columns from the dataframe, from column 12-
 
 
 ```{r, results='hide'}
-# cleaning data frame column names
+# Cleaning data frame column names
 beaches <- beaches %>% clean_names() 
 
-colnames(beaches)  # Viewing column names and associated column numbers
+# Viewing column names and associated column numbers
+colnames(beaches)  
 
-# deleting unused columns
+# Deleting unused columns
 beaches <- select(beaches,-seq(12, 109), -seq(112, 170))  
 
-# dropping columns which have NA values
+# Dropping columns which have NA values
 beaches <- drop_na(beaches)  
 
 ```
@@ -128,7 +131,8 @@ beaches <- drop_na(beaches)
 Changing data types: if variables are characters we are converting them to factors or 'categorical' data types, and if variables are integers we convert them to numeric. This is important for subsequent steps to work. R often requires variables to be a specific data type.
 
 ```{r, results='hide'}
-str(beaches)  # Checking data types
+# Checking data types
+str(beaches)  
 
 # Changing data types
 beaches <- beaches %>% mutate_if(is.character, as.factor) %>% 
