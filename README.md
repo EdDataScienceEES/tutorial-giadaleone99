@@ -4,7 +4,7 @@
 
 ### Click to access my [Maps Tutorial](https://eddatascienceees.github.io/tutorial-giadaleone99/maps_tutorial.html )
 
-This tutorial is aimed at people who have some experience in using R and would like to try spatial data visualisation by using R as a GIS like software using specific packages.
+This tutorial is aimed at people who have some experience in using R but are still at a beginner level and would like to try spatial data visualisation by using R as a GIS like software using specific packages.
 
 If you have any questions regarding the tutorial you can contact me at: giada.leone99@outlook.com
 
@@ -19,8 +19,8 @@ The subfolders within this repository and their contents
 
 ## Workflow for the creation of the tutorial 
 
-1. Choose a quantitative skill to teach in R
+1. Choose a quantitative skill to teach in R: I chose visualising spatial point data
 2. Determine clear and measurable learning objectives 
-3. Write the tutorial script in R
-4. Create markdown document with explanations and figures
-5. publish the HTML output on GitHub pages
+3. Write the tutorial script in R with comments
+4. Create Rmarkdown document with explanations, code chunks and produced figures
+5. publish the HTML output on GitHub pages to have the tutorial as a website
